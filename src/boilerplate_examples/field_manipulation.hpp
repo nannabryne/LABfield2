@@ -100,6 +100,7 @@ int compare_results(const double tolerance=1e-10){
 
 
     Field<Real> B_fresh;
+    B_fresh.initialize(lat) // woops
     // B_fresh.loadHDF5(outfile);
 
 
