@@ -1,0 +1,18 @@
+Basic information
+benchmark key: field_manipulation
+operations: ...
+
+Key parameters
+parallel grid: (2, 2)
+lattice size: ...
+
+Performance metrics
+original runtime: 0.5 ms
+latest runtime:   0.323727 ms
+performance enhancement: 35.2546 %
+
+Error diagnostics
+maximal error: 0
+minimal error: 0
+average error: 0
+

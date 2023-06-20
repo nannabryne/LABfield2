@@ -1,0 +1,18 @@
+Basic information
+benchmark key: fft_execution
+operations: ...
+
+Key parameters
+parallel grid: (2, 2)
+lattice size: ...
+
+Performance metrics
+original runtime: 10 ms
+latest runtime:   4.34101 ms
+performance enhancement: 56.5899 %
+
+Error diagnostics
+maximal error: 0
+minimal error: 0
+average error: 0
+
