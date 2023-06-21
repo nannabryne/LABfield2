@@ -21,6 +21,7 @@ struct Parameters{
     const int dim           = 3;            // #{dimensions}
     const int halo_size     = 1;            // size of halo
     const int lat_size[3]   = {40,40,40};   // lattice size
+    const int N_lat         = 40;           // lattice size in one dimension
 } params;
 
 
@@ -108,59 +109,19 @@ int main(int argc, char **argv){
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
-    /* Read files and create fields */
-
-
-    Field<Real> B_fresh;
-    B_fresh.initialize(lat); 
-    B_fresh.alloc();
-    B_fresh.loadHDF5(outfile);
-
-    Field<Real> B_org;
-    B_org.initialize(lat); 
-    B_org.alloc();
-    B_org.loadHDF5(orgfile);
-
-
-    /* Compare fields 
-    (going with absolute error instead of relative error to avoid division by zero) */
-
-    // Site x(lat);
-
-    double abs_err;         // absolute error
-    double max_err = 0.;    // maximal error
-    double min_err = 20.;   // minimal error
-    double avg_err = 0.;    // average error
-
-    for(x.first(); x.test(); x.next()){
-        abs_err = fabs( B_fresh(x) - B_org(x) );
-        avg_err += abs_err;
-        if(min_err > abs_err) min_err = abs_err;
-        if(max_err < abs_err) max_err = abs_err;   
-    }
-
-    parallel.max(max_err);
-    parallel.min(min_err);
-    parallel.sum(avg_err);
-
-    avg_err /= (double)lat.sites();
+    /* Ensure validity of output output */
 
     parallel.barrier();
-
-
-
-    // field_comparison(lat, &d);
-
+    field_comparison(params.dim, params.N_lat, params.halo_size, &d);
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     /* Diagnostic analysis*/
-   
-    d.error_diagnosis(max_err, min_err, avg_err);
+
     d.performance_metrics(0.5, runtime);
 
     d.write_epicrisis();
+    d.print_epicrisis();
 
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

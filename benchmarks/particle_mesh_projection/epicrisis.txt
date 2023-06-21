@@ -1,5 +1,5 @@
 Basic information
-benchmark key: field_manipulation
+benchmark key: particle_mesh_projection
 operations: ...
 
 Key parameters
@@ -7,9 +7,9 @@ parallel grid: (2, 2)
 lattice size: ...
 
 Performance metrics
-original runtime: 0.5 ms
-latest runtime:   0.335423 ms
-performance enhancement: 32.9153 %
+original runtime: 17 ms
+latest runtime:   17.2039 ms
+performance enhancement: 0 %
 
 Error diagnostics
 maximal error: 0

@@ -13,6 +13,7 @@
 struct Parameters{
     const int dim           = 3;            // #{dimensions}
     const int halo_size     = 1;            // size of halo
+    const int N_lat         = 60;           // lattice size in one dimension
     const int lat_size[3]   = {60,60,60};   // lattice size
     const int num_comp      = 1;            // #{components} ( = 1 for scalar field)
 
@@ -42,6 +43,8 @@ int main(int argc, char **argv){
                 break;
         }
     }
+
+    Diagnostics d("fft_execution", n, m);
 
     parallel.initialize(n, m);
 
@@ -100,58 +103,20 @@ int main(int argc, char **argv){
 
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-    
 
-    /* Read files and create fields */
-
-
-    Field<Real> f_fresh;
-    f_fresh.initialize(lat_x); 
-    f_fresh.alloc();
-    f_fresh.loadHDF5(outfile);
-
-    Field<Real> f_org;
-    f_org.initialize(lat_x); 
-    f_org.alloc();
-    f_org.loadHDF5(orgfile);
-
-
-    /* Compare fields 
-    (going with absolute error instead of relative error to avoid division by zero) */
-
-
-    double abs_err;         // absolute error
-    double max_err = 0.;    // maximal error
-    double min_err = 20.;   // minimal error
-    double avg_err = 0.;    // average error
-
-    for(x.first(); x.test(); x.next()){
-        abs_err = fabs( f_fresh(x) - f_org(x) );
-        avg_err += abs_err;
-        if(min_err > abs_err) min_err = abs_err;
-        if(max_err < abs_err) max_err = abs_err;   
-    }
-
-    parallel.max(max_err);
-    parallel.min(min_err);
-    parallel.sum(avg_err);
-
-    avg_err /= (double)lat_x.sites();
+    /* Ensure validity of output output */
 
     parallel.barrier();
-
+    field_comparison(params.dim, params.N_lat, params.halo_size, &d);
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     /* Diagnostic analysis*/
 
-
-    Diagnostics d("fft_execution", n, m);
-    d.error_diagnosis(max_err, min_err, avg_err);
     d.performance_metrics(4.5, runtime);
 
     d.write_epicrisis();
-
+    d.print_epicrisis();
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

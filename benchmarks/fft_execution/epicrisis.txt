@@ -7,9 +7,9 @@ parallel grid: (2, 2)
 lattice size: ...
 
 Performance metrics
-original runtime: 10 ms
-latest runtime:   4.34101 ms
-performance enhancement: 56.5899 %
+original runtime: 4.5 ms
+latest runtime:   4.47944 ms
+performance enhancement: 0 %
 
 Error diagnostics
 maximal error: 0

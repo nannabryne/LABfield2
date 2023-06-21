@@ -11,20 +11,23 @@ class Diagnostics{
         string outfile = "epicrisis.txt";
 
         // information:
-        string key;
+        string key;     // key descibing unit test
 
         // key properties:
-        int n, m;
+        int n, m;       // parallel grid size
 
         // performance metrics:
-        double org_runtime;
-        double new_runtime;
-        double performance_gain;
+        double org_runtime;         // 'original' runtime
+        double new_runtime;         // current runtime
+        double performance_gain;    // gain in performance in % (loss if negative)
 
         // error diagnostics:
-        double max_error;
-        double min_error;
-        double avg_error;
+        double max_error;   // maximal error (absolute)
+        double min_error;   // minimal error (absolute)
+        double avg_error;   // average error (absolute)
+
+        string text_epicrisis();    // ???
+
 
     public:
 
@@ -33,6 +36,8 @@ class Diagnostics{
         Diagnostics(string key, int n, int m);
 
         void write_epicrisis();
+
+        void print_epicrisis();
 
         void error_diagnosis(double max, double min, double avg);
 
@@ -45,7 +50,9 @@ Diagnostics::Diagnostics(string key, int n, int m) :
 key(key), n(n), m(m){}
 
 
+
 void Diagnostics::write_epicrisis(){
+    if(parallel.isRoot()){
     epicrisis.open(outfile.c_str());
 
     epicrisis << "Basic information" << endl
@@ -71,7 +78,38 @@ void Diagnostics::write_epicrisis(){
                 << endl;
         
     epicrisis.close();
+    }
+    
+}
 
+
+void Diagnostics::print_epicrisis(){ // temporary solution
+
+    COUT << "*******************************" << endl << endl;
+
+    COUT << "Basic information" << endl
+                << "benchmark key: " << key << endl
+                << "operations: " << "..." << endl 
+                << endl;
+
+    COUT << "Key parameters" << endl
+                << "parallel grid: " << "(" << n << ", " << m << ")" << endl
+                << "lattice size: " << "..." << endl
+                << endl;
+
+    COUT << "Performance metrics" << endl
+                << "original runtime: " << org_runtime << " ms" << endl
+                << "latest runtime:   " << new_runtime << " ms" << endl
+                << "performance enhancement: " << performance_gain << " %" << endl
+                << endl;
+    
+    COUT << "Error diagnostics" << endl
+                << "maximal error: " << max_error << endl
+                << "minimal error: " << min_error << endl
+                << "average error: " << avg_error << endl
+                << endl;
+
+    COUT << endl << "*******************************" << endl;
     
 }
 
@@ -95,40 +133,43 @@ void Diagnostics::performance_metrics(double org_time, double new_time){
 
 
 
-void field_comparison(Lattice lat, Diagnostics *d){
+void field_comparison(int dim, int lat_size, int halo_size, Diagnostics *d){
 
-    parallel.barrier();
+    // NB! Only works with scalar fields...
 
     string outfile = "fresh_output.h5";
     string orgfile = "org_output.h5";
 
+    Lattice lat(dim, lat_size, halo_size);
+
     /* Read files and create fields */
 
-    Field<Real> B_fresh;
-    B_fresh.initialize(lat); 
-    B_fresh.alloc();
-    B_fresh.loadHDF5(outfile);
 
-    Field<Real> B_org;
-    B_org.initialize(lat); 
-    B_org.alloc();
-    B_org.loadHDF5(orgfile);
+    Field<Real> field_fresh(lat);
+    field_fresh.loadHDF5(outfile);
+
+    Field<Real> field_org(lat);
+    field_org.loadHDF5(orgfile);
 
     /* Compare fields 
     (going with absolute error instead of relative error to avoid division by zero) */
 
     Site x(lat);
 
+    double err;
     double abs_err;         // absolute error
+    double rel_err;         // relative error
     double max_err = 0.;    // maximal error
-    double min_err = 20.;   // minimal error
+    double min_err = 1.0e4; // minimal error
     double avg_err = 0.;    // average error
 
     for(x.first(); x.test(); x.next()){
-        abs_err = fabs( B_fresh(x) - B_org(x) );
-        avg_err += abs_err;
-        if(min_err > abs_err) min_err = abs_err;
-        if(max_err < abs_err) max_err = abs_err;   
+        abs_err = fabs( field_fresh(x) - field_org(x) );
+        rel_err = abs_err/fabs(field_org(x));
+        err = abs_err;
+        avg_err += err;
+        if(min_err > err) min_err = err;
+        if(max_err < err) max_err = err;   
     }
 
     parallel.max(max_err);
