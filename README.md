@@ -18,3 +18,7 @@ We provide a number of unit tests for evaluating the performance (enhancement) o
 
 ## **(b)** Execution of fast Fourier transform
 > look-up folder: `benchmarks/fft_execution/`
+
+
+## **(c)** Particle-mesh projection
+> look-up folder: `benchmarks/particle_mesh_projection/`
