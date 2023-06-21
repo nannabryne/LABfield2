@@ -16,7 +16,6 @@ class Diagnostics{
         // key properties:
         int n, m;
 
-
         // performance metrics:
         double org_runtime;
         double new_runtime;
