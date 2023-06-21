@@ -8,8 +8,8 @@ lattice size: ...
 
 Performance metrics
 original runtime: 4.5 ms
-latest runtime:   4.47944 ms
-performance enhancement: 0 %
+latest runtime:   4.14415 ms
+performance enhancement: 7.90776 %
 
 Error diagnostics
 maximal error: 0

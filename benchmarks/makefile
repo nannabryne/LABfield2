@@ -61,3 +61,12 @@ run:
 .PHONY: clean
 clean:
 	rm -f $(wildcard *.o) $(EXEC)
+
+
+
+
+# testing alternative approach
+
+
+test: 
+	cd fft_execution && make && make run
