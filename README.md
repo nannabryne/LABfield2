@@ -4,8 +4,10 @@ Boilerplate examples and unit tests for investigating performance of LATfield2.
 ---
 
 # TODO:
-- [ ] Find a simple way of saving the parameters (`dim`, `npts` etc.) that was used to get the output?
-- [ ] Find appropriate simulation parameters and parallel grid for automatically running tests
+- [x] Find a simple way of saving the parameters (`dim`, `npts` etc.) that was used to get the output?
+- [x] Find appropriate simulation parameters and parallel grid for automatically running tests (these can quite easily be changed)
+- [ ] Focus on the timing of each separate process (function call), rather than the runtime for the whole example
+- [ ] Deal with the issue that the reference data (`benchmarks/**/org_output.h5`) are way too large for git [maybe simply save samples in a tarball? or be ok that they will be saved locally]
 
 ---
 
@@ -20,9 +22,12 @@ We provide a number of unit tests for evaluating the performance (enhancement) o
 ## **(a)** Field manipulation
 > look-up folder: `benchmarks/field_manipulation/`
 
+The boilerplate example is that of a linear combination between two fields. 
+
 
 ## **(b)** Execution of fast Fourier transform
 > look-up folder: `benchmarks/fft_execution/`
+
 
 
 ## **(c)** Particle-mesh projection
