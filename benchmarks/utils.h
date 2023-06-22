@@ -123,7 +123,7 @@ void Diagnostics::print_epicrisis(){ // temporary solution
                 << endl;
 
     COUT << "Key parameters" << endl
-                << "parallel grid: " << "(" << n << ", " << m << ")" << endl
+                << "parallel grid: " << "(" << n << " x " << m << ")" << endl
                 << "lattice size: " << num_cells << "^" << dim << endl
                 << "number of particles: " << num_parts << "^" << dim << endl
                 << endl;
