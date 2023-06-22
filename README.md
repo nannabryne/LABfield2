@@ -22,7 +22,7 @@ We provide a number of unit tests for evaluating the performance (enhancement) o
 
 Note that each example (unit) includes several function calls (computations) to $\textup{LATfield2}$. A part of the result is saved and compared to the original result to make sure the changes do not alter the calculations.
 
->Efficiency for a computation with $n$ compute processes and execution time $T$ is $$ \mathcal{E}(n)=\frac{n_{\mathrm{ref}} T_{\mathrm{ref}}}{nT},$$ where $n_{\mathrm{ref}}$ is the number of processes used in the original simulation and $T_{\mathrm{ref}}$ is the original simulation time. 
+>Efficiency for a computation with $n$ compute processes and execution time $T$ is $\mathcal{E}(n)=\frac{n_{\mathrm{ref}} T_{\mathrm{ref}}}{nT}$, where $n_{\mathrm{ref}}$ is the number of processes used in the original simulation and $T_{\mathrm{ref}}$ is the original simulation time. 
 
 
 ## **(a)** Field manipulation
