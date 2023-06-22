@@ -3,13 +3,15 @@ benchmark key: field_manipulation
 operations: ...
 
 Key parameters
-parallel grid: (2, 2)
-lattice size: ...
+parallel grid: (8 x 8)
+lattice size: 512^3
+number of particles: 0^3
 
 Performance metrics
-original runtime: 0.5 ms
-latest runtime:   0.335423 ms
-performance enhancement: 32.9153 %
+original runtime: 86.5 ms
+latest runtime: 105.128 ms
+performance enhancement: -21.5351 %
+efficiency: 0.822807
 
 Error diagnostics
 maximal error: 0

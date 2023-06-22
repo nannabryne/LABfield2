@@ -3,13 +3,15 @@ benchmark key: particle_mesh_projection
 operations: ...
 
 Key parameters
-parallel grid: (2, 2)
-lattice size: ...
+parallel grid: (8 x 8)
+lattice size: 512^3
+number of particles: 512^3
 
 Performance metrics
-original runtime: 17 ms
-latest runtime:   17.2039 ms
-performance enhancement: 0 %
+original runtime: 4000 ms
+latest runtime: 3430.77 ms
+performance enhancement: 14.2307 %
+efficiency: 1.16592
 
 Error diagnostics
 maximal error: 0
