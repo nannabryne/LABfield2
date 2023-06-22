@@ -8,10 +8,10 @@ lattice size: 512^3
 number of particles: 0^3
 
 Performance metrics
-original runtime: 2600 ms
-latest runtime: 2559.53 ms
+original runtime: 2400 ms
+latest runtime: 2346.82 ms
 performance enhancement: 0 %
-efficiency: 1.01581
+efficiency: 1.02266
 
 Error diagnostics
 maximal error: 0

@@ -22,8 +22,13 @@ TARGETS 	 := main
 DLATFIELD2   := -DFFT3D -DHDF5 #-DH5_HAVE_PARALLEL
 
 
-# optional compiler settings (gevolution)
+# optional compiler settings 
 DPROGRAM 	 :=
+
+bench_this?=n# whether to make the original sample (y) or do the analysis (n)
+ifeq ($(strip $(bench_this)), y)
+DPROGRAM +=-D_BENCH
+endif
 
 
 # further compiler options
@@ -56,11 +61,17 @@ run:
 	mpirun -np $(np) ./$(EXEC) -n $(n) -m $(m)
 
 
+bench: $(SOURCE) $(HEADERS) makefile
+	$(COMPILER) $< -o $@ $(OPT) $(DLATFIELD2) -D_BENCH $(INCLUDE) $(LIB)
+	mpirun -np $(np) ./$@ -n $(n) -m $(m)
+	rm $@
+
+
 
 # command to delete object files and executables
 .PHONY: clean
 clean:
-	rm -f $(wildcard *.o) $(EXEC)
+	rm -f $(wildcard *.o) $(EXEC) 
 
 
 

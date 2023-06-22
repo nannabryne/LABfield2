@@ -103,13 +103,12 @@ int main(int argc, char **argv){
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-    bool IS_REFERENCE = false;
-    if(IS_REFERENCE){
-        B.saveHDF5(orgfile);
-        COUT << "reference runtime: " << runtime << " ms" << endl;
-        COUT << "used " << n*m << " processes" << endl;
-    }
-    else{
+    
+#ifdef _BENCH
+    B.saveHDF5(orgfile);
+    COUT << "reference runtime: " << runtime << " ms" << endl;
+    COUT << "used " << n*m << " processes" << endl;
+#else
     
     B.saveHDF5(outfile);
 
@@ -130,7 +129,7 @@ int main(int argc, char **argv){
     d.write_epicrisis();
     d.print_epicrisis();
 
-    }
+#endif
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
 

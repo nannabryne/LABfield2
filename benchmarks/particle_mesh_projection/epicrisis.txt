@@ -9,9 +9,9 @@ number of particles: 512^3
 
 Performance metrics
 original runtime: 4000 ms
-latest runtime: 3430.77 ms
-performance enhancement: 14.2307 %
-efficiency: 1.16592
+latest runtime: 3451.53 ms
+performance enhancement: 13.7118 %
+efficiency: 1.15891
 
 Error diagnostics
 maximal error: 0

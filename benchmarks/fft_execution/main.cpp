@@ -43,7 +43,7 @@ int main(int argc, char **argv){
 
 
     Diagnostics d("fft_execution", n, m);
-    d.provide_reference_parameters(64, 2600.);
+    d.provide_reference_parameters(64, 2400.);
     d.provide_computation_parameters(npts);
 
     parallel.initialize(n, m);
@@ -116,14 +116,12 @@ int main(int argc, char **argv){
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 
-    bool IS_REFERENCE = false;
-    if(IS_REFERENCE){
-        f_x.saveHDF5(orgfile);
-        COUT << "reference runtime: " << runtime << " ms" << endl;
-        COUT << "used " << num_prcs << " processes" << endl;
-    }
-    else{
-    
+#ifdef _BENCH
+    f_x.saveHDF5(orgfile);
+    COUT << "reference runtime: " << runtime << " ms" << endl;
+    COUT << "used " << num_prcs << " processes" << endl;
+#else
+
     f_x.saveHDF5(outfile);
 
     
@@ -142,9 +140,8 @@ int main(int argc, char **argv){
     d.write_epicrisis();
     d.print_epicrisis();
 
-    }
+#endif
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 
     COUT << " " << endl;
 
