@@ -32,17 +32,18 @@ int main(int argc, char **argv){
                 break;
         }
     }
-    Diagnostics d("particle_mesh_projection", n, m);
-
+    
+    // simulation parameters:
     const int dim         = 3;      // #{dimensions}      
-    const int lat_size    = 60;     // size of lattice in one dim.  FIXME
-    const int npts        = 60;     // size of lattice in one dim. 
-    const int halo_size   = 1;      // size of halo in lattice
+    const int npts        = 512;    // size of lattice in one dim. 
+    const int halo        = 1;      // size of halo in lattice
+    const int num_parts   = 512;    // #{particles}   
+
+    Real lat_res    = 0.1;       // lattice resolution
     
-    
-    int num_parts   = 60;       // #{particles}   
-    Real lat_res    = 0.1;      // lattice resolution
-    
+    Diagnostics d("particle_mesh_projection", n, m);
+    d.provide_reference_parameters(64, 4000);
+    d.provide_computation_parameters(npts, num_parts);
     
     
     parallel.initialize(n, m);
@@ -55,8 +56,8 @@ int main(int argc, char **argv){
 
     /* Initialise lattices and fields */
 
-    Lattice lat(dim, lat_size, halo_size);
-    Lattice lat_part(dim, lat_size, 0);
+    Lattice lat(dim, npts, halo);
+    Lattice lat_part(dim, npts, 0);
 
     Field<Real> phi(lat, 1);                            // scalar field φ
     Field<Real> B(lat, dim);                            // vector field B
@@ -92,7 +93,7 @@ int main(int argc, char **argv){
     part_simple part;
 
     long index = 0;
-    int ratio = num_parts/lat_size;
+    int ratio = num_parts/npts;
 
     Site x_part(lat_part);
     for(x_part.first(); x_part.test(); x_part.next()){
@@ -126,49 +127,94 @@ int main(int argc, char **argv){
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-    /* Actual projection*/
+    /* Actual projection */
+
+    double timer_pause, timer_play;
 
     // ! START TIMING HERE
     timer_start = MPI_Wtime();
 
+    COUT << endl << "scalar projection ..." << endl;
+    timer_play = MPI_Wtime();
     scalarProjectionCIC_project(&parts, &phi);
+    timer_pause = MPI_Wtime();
+    COUT << "finished in " << (timer_pause-timer_play)*1000.0 << " ms" << endl;
+    
+    COUT << endl << "scalar communication ..." << endl;
+    timer_play = MPI_Wtime();
     scalarProjectionCIC_comm(&phi);
+    timer_pause = MPI_Wtime();
+    COUT << "finished in " << (timer_pause-timer_play)*1000.0 << " ms" << endl;
 
+
+
+
+    COUT << endl << "vector projection ..." << endl;
+    timer_play = MPI_Wtime();
     vectorProjectionCIC_project(&parts, &B);
+    timer_pause = MPI_Wtime();
+    COUT << "finished in " << (timer_pause-timer_play)*1000.0 << " ms" << endl;
+    
+    COUT << endl << "vector communication ..." << endl;
+    timer_play = MPI_Wtime();
     vectorProjectionCIC_comm(&B);
+    timer_pause = MPI_Wtime();
+    COUT << "finished in " << (timer_pause-timer_play)*1000.0 << " ms" << endl;
 
+
+
+
+    COUT << endl << "symmetric tensor projection ..." << endl;
+    timer_play = MPI_Wtime();
     symtensorProjectionCICNGP_project(&parts, &T);
+    timer_pause = MPI_Wtime();
+    COUT << "finished in " << (timer_pause-timer_play)*1000.0 << " ms" << endl;
+    
+    COUT << endl << "symmetric tensor communication ..." << endl;
+    timer_play = MPI_Wtime();
     symtensorProjectionCICNGP_comm(&T);
+    timer_pause = MPI_Wtime();
+    COUT << "finished in " << (timer_pause-timer_play)*1000.0 << " ms" << endl;
+
 
 
     // ! END TIMING HERE
     runtime = ((MPI_Wtime() - timer_start)*1000.0);
 
 
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+    bool IS_REFERENCE = false;
+    if(IS_REFERENCE){
+        phi.saveHDF5(orgfile);
+        COUT << endl << "reference runtime: " << runtime << " ms" << endl;
+        COUT << "used " << n*m << " processes" << endl;
+    }
+    else{
+    
     phi.saveHDF5(outfile);
-
-
-
-
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     /* Ensure validity of output output */
 
     parallel.barrier();
-    field_comparison(dim, lat_size, halo_size, &d);
+    field_comparison(dim, npts, halo, &d);
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     /* Diagnostic analysis*/
 
-    d.performance_metrics(17, runtime);
+
+    d.compute_performance_metrics(runtime);
 
     d.write_epicrisis();
     d.print_epicrisis();
 
+    }
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
+    
+   
 
     COUT << " " << endl;
 

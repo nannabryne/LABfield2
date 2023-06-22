@@ -2,7 +2,10 @@
  * @file fft_execution/main.cpp
  * @author Nanna Bryne
  * 
- * @brief Unit test: ...
+ * @brief Unit test: for FFT, both forward and backward
+ * 
+ * @details 
+ *      - Only consider quadratic lattices
  * 
 */
 
@@ -10,21 +13,9 @@
 #include "../utils.h"
 
 
-struct Parameters{
-    const int dim           = 3;            // #{dimensions}
-    const int halo_size     = 1;            // size of halo
-    const int N_lat         = 60;           // lattice size in one dimension
-    const int lat_size[3]   = {60,60,60};   // lattice size
-    const int num_comp      = 1;            // #{components} ( = 1 for scalar field)
-
-    const int halo_size_k   = 0;
-} params;
-
-
-
 int main(int argc, char **argv){
 
-    double time_ref, runtime;
+    double timer_start, runtime;
 
     string orgfile = "org_output.h5";
     string outfile = "fresh_output.h5";
@@ -42,11 +33,21 @@ int main(int argc, char **argv){
                 m = atoi(argv[++i]);
                 break;
         }
-    }
+    }   
+
+    // simulation parameters:
+    const int dim           = 3;            // #{dimensions}
+    const int halo          = 1;            // size of halo
+    const int halo_k        = 0;            // size of halo in Fourier 'space'
+    const int npts          = 512;         // lattice size in one dimension
+
 
     Diagnostics d("fft_execution", n, m);
+    d.provide_reference_parameters(64, 2600.);
+    d.provide_computation_parameters(npts);
 
     parallel.initialize(n, m);
+    num_prcs = n*m;
 
     COUT << " " << endl;
 
@@ -56,9 +57,9 @@ int main(int argc, char **argv){
 
     /* Initialise lattices and sites */
 
-    Lattice lat_x(params.dim, params.lat_size, params.halo_size);
+    Lattice lat_x(dim, npts, halo);
     Lattice lat_k;
-    lat_k.initializeRealFFT(lat_x, params.halo_size_k);
+    lat_k.initializeRealFFT(lat_x, halo_k);
 
     Site x(lat_x);
     rKSite k(lat_k);
@@ -66,15 +67,15 @@ int main(int argc, char **argv){
     /* Create fields */
 
 
-    Field<Real> f_x; f_x.initialize(lat_x, params.num_comp);    // f(x)
-    Field<Imag> f_k; f_k.initialize(lat_k, params.num_comp);    // f(k)
+    Field<Real> f_x; f_x.initialize(lat_x, 1);    // f(x)
+    Field<Imag> f_k; f_k.initialize(lat_k, 1);    // f(k)
 
     PlanFFT<Imag> plan_f(&f_x, &f_k);   // FFT planner for f(x) -> f(k)
 
 
     double sigma_sqrd   = lat_x.size(0)*lat_x.size(1)/10; 
     double mu[3]        = {lat_x.size(0)*0.5, lat_x.size(1)*0.5, lat_x.size(2)*0.5};
-    double A            = pow(2.*M_PI*sigma_sqrd, -params.dim*0.5); 
+    double A            = pow(2.*M_PI*sigma_sqrd, -dim*0.5); 
 
     double xp1, xp2, xp3;   // x' = x - μ = (x'_1, x'_2, x'_3) 
 
@@ -88,36 +89,60 @@ int main(int argc, char **argv){
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-    // ! START TIMING HERE
-    time_ref = MPI_Wtime();
+    double timer_pause, timer_play;
 
+    // ! START TIMING HERE
+    timer_start = MPI_Wtime();
+
+    COUT << endl << "FFT forward ..." << endl;
+    timer_play = MPI_Wtime();
     plan_f.execute(FFT_FORWARD);
+    timer_pause = MPI_Wtime();
+    COUT << "finished in " << (timer_pause-timer_play)*1000.0 << " ms" << endl;
+
+
+    COUT << endl << "FFT backward ..." << endl;
+    timer_play = MPI_Wtime();
     plan_f.execute(FFT_BACKWARD);
+    timer_pause = MPI_Wtime();
+    COUT << "finished in " << (timer_pause-timer_play)*1000.0 << " ms" << endl;
 
     // ! END TIMING HERE
-    runtime = ((MPI_Wtime() - time_ref)*1000.0);
+    runtime = ((MPI_Wtime() - timer_start)*1000.0);
 
     f_x.updateHalo();
-
-    f_x.saveHDF5(outfile);
 
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+
+    bool IS_REFERENCE = false;
+    if(IS_REFERENCE){
+        f_x.saveHDF5(orgfile);
+        COUT << "reference runtime: " << runtime << " ms" << endl;
+        COUT << "used " << num_prcs << " processes" << endl;
+    }
+    else{
+    
+    f_x.saveHDF5(outfile);
+
+    
     /* Ensure validity of output output */
 
     parallel.barrier();
-    field_comparison(params.dim, params.N_lat, params.halo_size, &d);
+    field_comparison(dim, npts, halo, &d);
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     /* Diagnostic analysis*/
 
-    d.performance_metrics(4.5, runtime);
+
+    d.compute_performance_metrics(runtime);
 
     d.write_epicrisis();
     d.print_epicrisis();
 
+    }
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 

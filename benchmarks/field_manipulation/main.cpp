@@ -15,21 +15,10 @@
 #include "../utils.h"
 
 
-// struct DiagnosticOutput diagnostics;
-
-struct Parameters{
-    const int dim           = 3;            // #{dimensions}
-    const int halo_size     = 1;            // size of halo
-    const int lat_size[3]   = {40,40,40};   // lattice size
-    const int N_lat         = 40;           // lattice size in one dimension
-} params;
-
-
-
 
 int main(int argc, char **argv){
 
-    double time_ref, runtime;
+    double timer_start, runtime;
 
     string orgfile = "org_output.h5";
     string outfile = "fresh_output.h5";
@@ -49,7 +38,17 @@ int main(int argc, char **argv){
         }
     }
 
+    // simulation parameters:
+    const int dim   = 3;        // #{dimensions}
+    const int halo  = 1;        // size of halo
+    const int npts  = 512;     // lattice size in one dimension
+
     Diagnostics d("field_manipulation", n, m);
+    d.provide_reference_parameters(64, 86.5);
+    d.provide_computation_parameters(npts);
+    
+
+
     parallel.initialize(n, m);
     
     COUT << " " << endl;
@@ -58,7 +57,7 @@ int main(int argc, char **argv){
 
     /* Define lattice */
 
-    Lattice lat(params.dim, params.lat_size, params.halo_size);
+    Lattice lat(dim, npts, halo);
 
     /* Set up fields */
     Field<Real> A1;
@@ -88,14 +87,14 @@ int main(int argc, char **argv){
     B.alloc();
 
     // ! START TIMING HERE
-    time_ref = MPI_Wtime();
+    timer_start = MPI_Wtime();
 
     for(x.first(); x.test(); x.next()){
         B(x) = alpha1*A1(x) + alpha2*A2(x);
     }
 
     // ! END TIMING HERE
-    runtime = 1000.0 * (MPI_Wtime() - time_ref);
+    runtime = 1000.0 * (MPI_Wtime() - timer_start);
 
     B.updateHalo();
 
@@ -104,6 +103,13 @@ int main(int argc, char **argv){
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+    bool IS_REFERENCE = false;
+    if(IS_REFERENCE){
+        B.saveHDF5(orgfile);
+        COUT << "reference runtime: " << runtime << " ms" << endl;
+        COUT << "used " << n*m << " processes" << endl;
+    }
+    else{
     
     B.saveHDF5(outfile);
 
@@ -112,20 +118,21 @@ int main(int argc, char **argv){
     /* Ensure validity of output output */
 
     parallel.barrier();
-    field_comparison(params.dim, params.N_lat, params.halo_size, &d);
+    field_comparison(dim, npts, halo, &d);
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     /* Diagnostic analysis*/
 
-    d.performance_metrics(0.5, runtime);
+
+    d.compute_performance_metrics(runtime);
 
     d.write_epicrisis();
     d.print_epicrisis();
 
-
+    }
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
+    
 
 
     COUT << " " << endl;
