@@ -33,8 +33,8 @@ OPT          := -O3 -std=c++11
 
 
 # parallel grid:
-n?=2
-m?=2
+n?=8
+m?=8
 np=$(shell echo ${n}*${m} | bc)
 
 
