@@ -35,5 +35,8 @@
 # VSCode
 *.vscode
 
+# h5 files?
+*.h5
+
 # Build dir
 */build/*
