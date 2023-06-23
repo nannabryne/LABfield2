@@ -32,9 +32,9 @@ class Diagnostics{
         double efficiency;
 
         // error diagnostics:
-        double max_error;   // maximal error (absolute)
-        double min_error;   // minimal error (absolute)
-        double avg_error;   // average error (absolute)
+        double max_error;   // maximal error (relatiive)
+        double min_error;   // minimal error (relatiive)
+        double avg_error;   // average error (relatiive)
 
         string text_epicrisis();    // ???
 
