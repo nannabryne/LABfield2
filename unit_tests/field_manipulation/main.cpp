@@ -35,16 +35,20 @@ int main(int argc, char **argv){
             case 'm':
                 m = atoi(argv[++i]);
                 break;
+            // case 'o':
+            //     o = atoi(argv[++i]);
+            //     break;
         }
     }
+    
 
     // simulation parameters:
     const int dim   = 3;        // #{dimensions}
-    const int halo  = 1;        // size of halo
-    const int npts  = 512;     // lattice size in one dimension
+    const int halo  = 2;        // size of halo
+    const int npts  = 1000;     // lattice size in one dimension
 
     Diagnostics d("field_manipulation", n, m);
-    d.provide_reference_parameters(64, 86.5);
+    d.provide_reference_parameters(40,  694.14);
     d.provide_computation_parameters(npts);
     
 
@@ -88,11 +92,20 @@ int main(int argc, char **argv){
 
     // ! START TIMING HERE
     timer_start = MPI_Wtime();
+    COUT << "Starting timer \n";
 
-    for(x.first(); x.test(); x.next()){
+    /* (old version) */
+    // for(x.first(); x.test(); x.next()){
+    //     B(x) = alpha1*A1(x) + alpha2*A2(x);
+    // }
+
+    /* (new version) */
+    auto op = [&](Site& x){
         B(x) = alpha1*A1(x) + alpha2*A2(x);
-    }
+    };
+    lat.for_each(op);
 
+    COUT << "Stopping timer \n";
     // ! END TIMING HERE
     runtime = 1000.0 * (MPI_Wtime() - timer_start);
 
@@ -103,14 +116,14 @@ int main(int argc, char **argv){
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-    
+    int k0 = 5;    
 #ifdef _BENCH
-    B.saveHDF5(orgfile);
+    B.saveSliceHDF5(orgfile, k0);
     COUT << "reference runtime: " << runtime << " ms" << endl;
     COUT << "used " << n*m << " processes" << endl;
 #else
     
-    B.saveHDF5(outfile);
+    B.saveSliceHDF5(outfile, k0);
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

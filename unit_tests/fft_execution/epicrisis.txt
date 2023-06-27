@@ -3,18 +3,18 @@ benchmark key: fft_execution
 operations: ...
 
 Key parameters
-parallel grid: (8 x 8)
+parallel grid: (2 x 2)
 lattice size: 512^3
 number of particles: 0^3
 
 Performance metrics
 original runtime: 2400 ms
-latest runtime: 2346.82 ms
-performance enhancement: 0 %
-efficiency: 1.02266
+latest runtime: 5072.69 ms
+performance enhancement: -111.362 %
+efficiency: 7.56994
 
 Error diagnostics
-maximal error: 0
+maximal error: 1.9984e-15
 minimal error: 0
-average error: 0
+average error: 1.98017e-16
 

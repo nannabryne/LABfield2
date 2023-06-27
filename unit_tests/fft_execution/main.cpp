@@ -65,6 +65,7 @@ int main(int argc, char **argv){
     rKSite k(lat_k);
 
     /* Create fields */
+    fftw_init_threads();
 
 
     Field<Real> f_x; f_x.initialize(lat_x, 1);    // f(x)
