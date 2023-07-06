@@ -48,7 +48,7 @@ int main(int argc, char **argv){
     const int npts  = 1000;     // lattice size in one dimension
 
     Diagnostics d("field_manipulation", n, m);
-    d.provide_reference_parameters(40,  694.14);
+    d.provide_reference_parameters(80,  694.14);
     d.provide_computation_parameters(npts);
     
 
@@ -116,7 +116,7 @@ int main(int argc, char **argv){
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-    int k0 = 5;    
+    int k0 = 5; 
 #ifdef _BENCH
     B.saveSliceHDF5(orgfile, k0);
     COUT << "reference runtime: " << runtime << " ms" << endl;

@@ -118,7 +118,8 @@ int main(int argc, char **argv){
                 }
     }
 
-    /* Projection initialisation */
+    /* Projection initialisation
+        (set the field to zero everyhvere) */
 
     projection_init(&phi);
     projection_init(&B);

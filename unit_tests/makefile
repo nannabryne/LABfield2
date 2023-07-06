@@ -20,7 +20,7 @@ TARGETS 	 := main
 
 
 # mandatory compiler settings (LATfield2)
-DLATFIELD2   := -DFFT3D -DHDF5 #-DH5_HAVE_PARALLEL
+DLATFIELD2   := -DFFT3D -DHDF5#-DH5_HAVE_PARALLEL
 
 
 # optional compiler settings 
@@ -51,6 +51,8 @@ n=4
 m=10
 endif
 
+
+
 # 	-	-	-	-	-	-	-	-	-	
 #	COMMANDS
 # 	-	-	-	-	-	-	-	-	-
@@ -62,7 +64,9 @@ $(EXEC): $(SOURCE) $(HEADERS) makefile
 
 
 # command to build C++ program:
-all: $(EXEC) 
+all: 
+	$(COMPILER) $(COMPILERFLAGS) $(SOURCE) -o $(EXEC) $(OPT) $(DLATFIELD2) $(DPROGRAM) $(INCLUDE) $(LIB)
+	mpirun -np 4 -ppn 1 ./$(EXEC) -n 2 -m 2
 
 
 run: 
@@ -71,7 +75,7 @@ run:
 
 bench: $(SOURCE) $(HEADERS) makefile
 	$(COMPILER) $< -o $@ $(OPT) $(DLATFIELD2) -D_BENCH $(INCLUDE) $(LIB)
-	mpirun -np 40 ./$@ -n 4 -m 10
+	mpirun -np 80 -ppn 20 ./$@ -n 4 -m 20
 	rm $@
 
 

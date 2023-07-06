@@ -39,11 +39,11 @@ int main(int argc, char **argv){
     const int dim           = 3;            // #{dimensions}
     const int halo          = 1;            // size of halo
     const int halo_k        = 0;            // size of halo in Fourier 'space'
-    const int npts          = 512;         // lattice size in one dimension
+    const int npts          = 1000;         // lattice size in one dimension
 
 
     Diagnostics d("fft_execution", n, m);
-    d.provide_reference_parameters(64, 2400.);
+    d.provide_reference_parameters(80, 11500);
     d.provide_computation_parameters(npts);
 
     parallel.initialize(n, m);
@@ -65,7 +65,10 @@ int main(int argc, char **argv){
     rKSite k(lat_k);
 
     /* Create fields */
+#ifdef _OPENMP
     fftw_init_threads();
+    COUT << omp_get_max_threads() << endl;
+#endif
 
 
     Field<Real> f_x; f_x.initialize(lat_x, 1);    // f(x)
@@ -80,13 +83,23 @@ int main(int argc, char **argv){
 
     double xp1, xp2, xp3;   // x' = x - μ = (x'_1, x'_2, x'_3) 
 
-    for(x.first(); x.test(); x.next()){
+    // for(x.first(); x.test(); x.next()){
+    //     xp1 = (x.coord(0) - mu[0]); xp1 *= xp1;
+    //     xp2 = (x.coord(1) - mu[1]); xp2 *= xp2;
+    //     xp3 = (x.coord(2) - mu[2]); xp3 *= xp3;
+
+    //     f_x(x) = A*exp(-(xp1+xp2+xp3) / sigma_sqrd*.5);
+    // }
+
+    auto op = [&](Site x){
         xp1 = (x.coord(0) - mu[0]); xp1 *= xp1;
         xp2 = (x.coord(1) - mu[1]); xp2 *= xp2;
         xp3 = (x.coord(2) - mu[2]); xp3 *= xp3;
 
         f_x(x) = A*exp(-(xp1+xp2+xp3) / sigma_sqrd*.5);
-    }
+    };
+
+    lat_x.for_each(op);
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -116,14 +129,14 @@ int main(int argc, char **argv){
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
+    int k0 = 5;
 #ifdef _BENCH
-    f_x.saveHDF5(orgfile);
+    f_x.saveSliceHDF5(orgfile, 5);
     COUT << "reference runtime: " << runtime << " ms" << endl;
     COUT << "used " << num_prcs << " processes" << endl;
 #else
 
-    f_x.saveHDF5(outfile);
+    f_x.saveSliceHDF5(outfile, 5);
 
     
     /* Ensure validity of output output */

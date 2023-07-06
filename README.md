@@ -40,3 +40,8 @@ The boilerplate example is that of a linear combination between two fields.
 
 ## **(c)** Particle-mesh projection
 > look-up folder: `unit_tests/particle_mesh_projection/`
+
+
+# notes:
+- Remember to think of race conditions!! Should maybe our code check whether we are in the danger zone or not?
+- Performance enhancement & reduction in mem.  footprint

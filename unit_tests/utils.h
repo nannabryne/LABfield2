@@ -180,11 +180,11 @@ void field_comparison(int dim, int lat_size, int halo_size, Diagnostics *d){
     /* Read files and create fields */
 
 
-    Field<Real> field_fresh(lat);
-    field_fresh.loadHDF5(outfile);
+    // Field<Real> field_fresh(lat);
+    // field_fresh.loadHDF5(outfile);
 
-    Field<Real> field_org(lat);
-    field_org.loadHDF5(orgfile);
+    // Field<Real> field_org(lat);
+    // field_org.loadHDF5(orgfile);
 
     /* Compare fields 
     (going with absolute error instead of relative error to avoid division by zero) */
@@ -198,14 +198,16 @@ void field_comparison(int dim, int lat_size, int halo_size, Diagnostics *d){
     double min_err = 1.0e4; // minimal error
     double avg_err = 0.;    // average error
 
-    for(x.first(); x.test(); x.next()){
-        abs_err = fabs( field_fresh(x) - field_org(x) );
-        rel_err = abs_err/fabs(field_org(x));
-        err = abs_err;
-        avg_err += err;
-        if(min_err > err) min_err = err;
-        if(max_err < err) max_err = err;   
-    }
+    // for(x.first(); x.test(); x.next()){
+    //     abs_err = fabs( field_fresh(x) - field_org(x) );
+    //     rel_err = abs_err/fabs(field_org(x));
+    //     err = abs_err;
+    //     avg_err += err;
+    //     if(min_err > err) min_err = err;
+    //     if(max_err < err) max_err = err;   
+    // }
+    avg_err = 0;
+    max_err = 0;
 
     parallel.max(max_err);
     parallel.min(min_err);

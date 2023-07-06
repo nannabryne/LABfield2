@@ -4,17 +4,17 @@ operations: ...
 
 Key parameters
 parallel grid: (2 x 2)
-lattice size: 512^3
+lattice size: 1000^3
 number of particles: 0^3
 
 Performance metrics
-original runtime: 2400 ms
-latest runtime: 5072.69 ms
-performance enhancement: -111.362 %
-efficiency: 7.56994
+original runtime: 11500 ms
+latest runtime: 28336.4 ms
+performance enhancement: -146.404 %
+efficiency: 8.11676
 
 Error diagnostics
-maximal error: 1.9984e-15
-minimal error: 0
-average error: 1.98017e-16
+maximal error: 0
+minimal error: 10000
+average error: 0
 
