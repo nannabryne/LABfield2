@@ -1,6 +1,6 @@
 # $\textup{LABfield2}$
 
-Example codes to control the results from running code in $\textup{LABfield2}$ that is OpenMP parallelised.
+Example codes to control the results from running code in $\textup{LATfield2}$ that is OpenMP parallelised.
 
 (list of functions that are changed?)
 
