@@ -20,8 +20,6 @@ inline void initialiseParticles();
 
 int main(int argc, char **argv){
 
-    //  set random seed:
-    srand(148);
 
     ///////////////////////////////////////////////////////////
 
@@ -58,11 +56,18 @@ int main(int argc, char **argv){
 
     parallel.initialize(n, m);
 
-    string SEP = "\n";
-    for(int i; i<60; i++)SEP += "-";
+    const int sepLen=60;
+    string SEP = "\n", solidSEP="\n"; 
+    for(int i; i<sepLen; i++){
+        SEP += "-";
+        solidSEP += "_";
+    }
     SEP += "\n\n"; 
+    solidSEP += "\n\n";
 
-    COUT << SEP << "Using " << n << " x " << m << " MPI processes; each spawning " << o << " OpenMP threads\n" << SEP;
+    COUT << solidSEP;
+
+    COUT << "Using " << n << " x " << m << " MPI processes; each spawning " << o << " OpenMP threads\n" << SEP;
 
     ///////////////////////////////////////////////////////////
 
@@ -74,6 +79,18 @@ int main(int argc, char **argv){
     const int nparts    = 400;  // number of particles in box
     const Real lat_res  = 0.1;  // lattice resolution 
 
+
+    COUT << "Simulation parameters\n";
+    
+    COUT<< "> number of dimensions:     " << dim << "\n"
+        << "> number of lattice points: " << npts << "\n"
+        << "> size of halo:             " << halo << "\n"
+        << "> number of particles:      " << nparts << "\n"
+        << "> lattice resolution:       " << lat_res << "\n";
+
+    COUT << solidSEP;
+
+    ///////////////////////////////////////////////////////////
 
     MPI_timer TIMER(8);
 
@@ -100,7 +117,7 @@ int main(int argc, char **argv){
 #ifdef PART
     particleUpdateSimple(&TIMER, part_tag, npts, halo, nparts, lat_res, dim);
 #endif
-    
+
 
 
 
