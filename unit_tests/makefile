@@ -50,6 +50,9 @@ $(EXEC): $(SOURCE) makefile
 run: 
 	mpirun -np $(np) ./$(EXEC) -n $(n) -m $(m)
 
+analysis:
+	python3 error_analysis.py
+
 
 
 .PHONY: clean

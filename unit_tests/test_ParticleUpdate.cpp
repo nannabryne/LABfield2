@@ -20,6 +20,8 @@ void particleUpdateSimple(MPI_timer *timer, int* run_no, const int npts=1000, co
     unsigned int seed = 140;
     randomParticleEnsemble(&parts, nparts, boxSize, seed);
 
+    // NOT FINISHED
+
 
     
 
