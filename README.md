@@ -1,3 +1,17 @@
+# $\textup{LABfield2}$ [new]
+
+Example codes to control the results from running code in $\textup{LABfield2}$ that is OpenMP parallelised.
+
+
+
+
+<!-- 
+
+---
+---
+---
+---
+---
 # $\textup{LABfield2}$
 Boilerplate examples and unit tests for investigating performance of $\textup{LATfield2}$.
 
@@ -44,4 +58,4 @@ The boilerplate example is that of a linear combination between two fields.
 
 # notes:
 - Remember to think of race conditions!! Should maybe our code check whether we are in the danger zone or not?
-- Performance enhancement & reduction in mem.  footprint
+- Performance enhancement & reduction in mem.  footprint -->
