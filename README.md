@@ -1,8 +1,35 @@
-# $\textup{LABfield2}$ [new]
+# $\textup{LABfield2}$
 
 Example codes to control the results from running code in $\textup{LABfield2}$ that is OpenMP parallelised.
 
+(list of functions that are changed?)
 
+## How to run
+Suppose you are in the `unit_tests` directory.
+To run the scripts using OpenMP, type
+```bash
+make; make run
+```
+and output will be written to `.h5` files in `output/`. 
+
+If changes are made to the code in terms of number of particles, lattice resolution, etc., one may need to create a new result file to compare with. To run the scripts without OpenMP, one can simply type
+```bash
+make o=1; make run
+```
+and the original output files will be overwritten.
+
+To run diagnostics, see `error_analysis.py`. One can also simply type
+```bash
+make analysis
+```
+and terminal print will be provided.
+
+### Details
+Flags are given be given to the compiler to specify what tests should be run.
+- `-DLOOPCORR` $\leadsto$ `loopCorrectionSimple(...)` (see header `test_LoopCorrection.hpp`)
+- `-DPROJECTION` $\leadsto$ `partMeshProjectionSimple(...)` (see header `test_PartMeshProjection.hpp`)
+- `-DFOURIER` $\leadsto$ `fasterFourierTransformSimple(...)` (see header `test_FasterFourierTransform.hpp`)
+- `-DPART` $\leadsto$ `particleUpdateSimple(...)` (see header `test_ParticleUpdate.hpp`)
 
 
 <!-- 
