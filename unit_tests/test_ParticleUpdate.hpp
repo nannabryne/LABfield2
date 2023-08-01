@@ -63,16 +63,8 @@ void particleUpdateSimple(MPI_timer *timer, int* run_no, const int npts=1000, co
     scalarProjectionCIC_project(&parts, &dummy_field);
     scalarProjectionCIC_comm(&dummy_field);
 
-
-
-    auto multiply = [&] (Site& x){
-        dummy_field(x) = (Real)1e5*dummy_field(x);
-    };
-
-    lat_field.for_each(multiply);
-
     int xcoord = npts/2;
-    int w = npts/3;
+    int w = 2*npts/3;
     string filename = getOutputFilename("ParticleUpdate");
     dummy_field.saveSliceHDF5(filename, xcoord, w);
 

@@ -56,10 +56,12 @@ class ErrorAnalysis:
 
     def plot(self):
 
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(11,9))
         data = np.mean(self.org_data, axis=2)
-        # data = np.where(np.abs(data)>1e-3, data, np.nan)
-        im = ax.imshow(data, cmap=cm.cool)#, norm=colors.LogNorm(vmin=1e-3))
+        data[np.abs(data)<1e-4] = np.nan
+        cmap = cm.cool
+        cmap.set_bad("k")
+        im = ax.imshow(data, cmap=cmap, origin="lower")
         fig.colorbar(im)
         plt.show()
     

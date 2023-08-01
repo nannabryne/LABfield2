@@ -67,7 +67,7 @@ int main(int argc, char **argv){
 
     COUT << solidSEP;
 
-    COUT << "Using " << n << " x " << m << " MPI processes; each spawning " << o << " OpenMP threads\n" << SEP;
+    COUT << "Using " << n << " x " << m << " = " << n*m << " MPI processes; each spawning " << o << " OpenMP threads\n" << SEP;
 
     ///////////////////////////////////////////////////////////
 
@@ -75,8 +75,8 @@ int main(int argc, char **argv){
 
     const int dim       = 3;    // number of spatial dimensions
     const int halo      = 2;    // size of halo
-    const int npts      = 500;  // number of lattice points in each direction
-    const int nparts    = 800;  // number of particles in box
+    const int npts      = 512;  // number of lattice points in each direction
+    const int nparts    = 1000; // number of particles in box
     const Real lat_res  = 0.1;  // lattice resolution 
 
     Real boxSize[dim];
