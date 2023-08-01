@@ -26,10 +26,27 @@ and terminal print will be provided.
 
 ### Details
 Flags are given be given to the compiler to specify what tests should be run.
-- `-DLOOPCORR` $\leadsto$ `loopCorrectionSimple(...)` (see header `test_LoopCorrection.hpp`)
-- `-DPROJECTION` $\leadsto$ `partMeshProjectionSimple(...)` (see header `test_PartMeshProjection.hpp`)
-- `-DFOURIER` $\leadsto$ `fasterFourierTransformSimple(...)` (see header `test_FasterFourierTransform.hpp`)
-- `-DPART` $\leadsto$ `particleUpdateSimple(...)` (see header `test_ParticleUpdate.hpp`)
+- **`-DLOOPCORR`** $\leadsto$ `loopCorrectionSimple(...)` (see header `test_LoopCorrection.hpp`)
+    >In `LATfield2/LATfield2_Lattice[_decl].hpp`, we test
+    >1.  `Lattice::for_each(...)`
+    > ---
+
+- **`-DPROJECTION`** $\leadsto$ `partMeshProjectionSimple(...)` (see header `test_PartMeshProjection.hpp`)
+    > In `LATfield2/particles/projections.hpp`, we test
+    > 1. `scalarProjectionCIC_project(...)`
+    > 2. `vectorProjectionCICNGP_project(...)`
+    > 3. `symtensorProjectionCICNGP_project(...)`
+    > ---
+- **`-DFOURIER`** $\leadsto$ `fasterFourierTransformSimple(...)` (see header `test_FasterFourierTransform.hpp`)
+    > In `LATfield2/LATfield2_PlanFFT_decl.hpp`, we test
+    > 1. `PlanFFT::execute(FFT_FORWARD)`
+    > 2. `PlanFFT::execute(FFT_BACKWARD)`
+    > ---
+- **`-DPART`** $\leadsto$ `particleUpdateSimple(...)` (see header `test_ParticleUpdate.hpp`)
+    > In `LATfield2/particles/LATfield2_Particles.hpp`, we test
+    > 1. `Particles::updateVel(...)`
+    > 2. `Particles::moveParticles(...)`
+    > ---
 
 
 <!-- 
