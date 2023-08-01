@@ -1,4 +1,31 @@
 
+Real update_velocity_func(  
+    double dtau,
+    double lat_resolution,
+    part_simple * part,
+    double * ref_dist,
+    part_simple_info partInfo,
+    Field<Real> ** fields,
+    Site * sites,
+    int nfields,
+    double * params,
+    double * outputs,
+    int noutputs);
+
+void move_particles_func(   
+    double dtau,
+    double lat_resolution,
+    part_simple * part,
+    double * ref_dist,
+    part_simple_info partInfo,
+    Field<Real> ** fields,
+    Site * sites,
+    int nfields,
+    double * params,
+    double * outputs,
+    int noutputs);
+
+
 void particleUpdateSimple(MPI_timer *timer, int* run_no, const int npts=1000, const int halo=2, const int nparts=100, const Real lat_res=0.1, const int dim=3){
     
     Real boxSize[dim];
@@ -19,10 +46,92 @@ void particleUpdateSimple(MPI_timer *timer, int* run_no, const int npts=1000, co
 
     unsigned int seed = 140;
     randomParticleEnsemble(&parts, nparts, boxSize, seed);
-
-    // NOT FINISHED
-
-
     
 
+    parts.updateVel(&update_velocity_func, 1.0);
+
+
+    parts.moveParticles(&move_particles_func, 1.0);
+
+
+    /* Save result in simple & compact way */
+
+    Field<Real> dummy_field(lat_field);
+    
+    projection_init(&dummy_field);
+
+    scalarProjectionCIC_project(&parts, &dummy_field);
+    scalarProjectionCIC_comm(&dummy_field);
+
+
+
+    auto multiply = [&] (Site& x){
+        dummy_field(x) = (Real)1e5*dummy_field(x);
+    };
+
+    lat_field.for_each(multiply);
+
+    int xcoord = npts/2;
+    int w = npts/3;
+    string filename = getOutputFilename("ParticleUpdate");
+    dummy_field.saveSliceHDF5(filename, xcoord, w);
+
+    COUT << "File '" << filename << "' was saved.\n";
+
 }   
+
+
+
+
+
+Real update_velocity_func(  
+    double dtau,
+    double lat_resolution,
+    part_simple * part,
+    double * ref_dist,
+    part_simple_info partInfo,
+    Field<Real> ** fields,
+    Site * sites,
+    int nfields,
+    double * params,
+    double * outputs,
+    int noutputs){
+                    
+
+    Real v2;
+
+    for(int i=0; i<3; i++){
+        Real f=0;
+        for(int n=0; n<nfields; n++)f += (*fields[n])(sites[n], 0);
+        (*part).vel[i] = (*part).vel[i] * (1.+f);
+
+        v2 =(*part).vel[i] * (*part).vel[i];
+    }
+
+    return v2;
+}
+                          
+
+void move_particles_func(   
+    double dtau,
+    double lat_resolution,
+    part_simple * part,
+    double * ref_dist,
+    part_simple_info partInfo,
+    Field<Real> ** fields,
+    Site * sites,
+    int nfields,
+    double * params,
+    double * outputs,
+    int noutputs){
+
+    
+    for(int l=0; l<3; l++){
+        Real f=0;
+        for(int n=0; n<nfields; n++)f += (*fields[n])(sites[n], 0);
+        (*part).pos[l] += dtau*(*part).vel[l]* (1. + 1e-4*f);
+    }
+
+
+
+}

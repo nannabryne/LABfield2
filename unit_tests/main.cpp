@@ -76,17 +76,21 @@ int main(int argc, char **argv){
     const int dim       = 3;    // number of spatial dimensions
     const int halo      = 2;    // size of halo
     const int npts      = 500;  // number of lattice points in each direction
-    const int nparts    = 400;  // number of particles in box
+    const int nparts    = 800;  // number of particles in box
     const Real lat_res  = 0.1;  // lattice resolution 
+
+    Real boxSize[dim];
+    for(int i=0; i<dim; i++)boxSize[i] = lat_res*npts;
 
 
     COUT << "Simulation parameters\n";
     
     COUT<< "> number of dimensions:     " << dim << "\n"
-        << "> number of lattice points: " << npts << "\n"
+        << "> number of lattice points: " << npts << "^" << dim << "\n"
         << "> size of halo:             " << halo << "\n"
         << "> number of particles:      " << nparts << "\n"
-        << "> lattice resolution:       " << lat_res << "\n";
+        << "> lattice resolution:       " << lat_res << "\n"
+        << "> box size:                 " << boxSize[0]<< "^" << dim << "\n";
 
     COUT << solidSEP;
 
@@ -98,30 +102,34 @@ int main(int argc, char **argv){
     int loop_tag[]  = {0};      // for_each
     int proj_tag[]  = {1,2,3};  // scalar, vector, sym. tensor
     int fft_tag[]   = {4,5};    // forward, backward
-    int part_tag[]  = {6,7};    // update vel., move particle    
+    int part_tag[]  = {6,7};    // update vel., move particle 
 
 
 
 #ifdef LOOPCORR
     loopCorrectionSimple(&TIMER, loop_tag, npts, halo);
+    COUT << SEP;
 #endif
 
 #ifdef PROJECTION
     partMeshProjSimple(&TIMER, proj_tag, npts, halo, nparts, lat_res, dim);
+    COUT << SEP;
 #endif
 
 #ifdef FOURIER
     fasterFourierTransformSimple(&TIMER, fft_tag, npts, halo, nparts, lat_res, dim);
+    COUT << SEP;
 #endif
 
 #ifdef PART
     particleUpdateSimple(&TIMER, part_tag, npts, halo, nparts, lat_res, dim);
+    COUT << SEP;
 #endif
 
 
+    COUT << "Results saved in 'output/' directory.\n";
 
-
-    COUT << SEP;
+    COUT << solidSEP;
 
 
     return 0;

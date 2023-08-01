@@ -73,7 +73,7 @@ void partMeshProjSimple(MPI_timer *timer, int* run_no, const int npts=1000, cons
     int xcoord = npts/4;
     int w = 3;
     string filename = getOutputFilename("PartMeshProjection");
-    scalar_field.saveSliceHDF5(filename, xcoord, w);
+    dummy_field.saveSliceHDF5(filename, xcoord, w);
 
     COUT << "File '" << filename << "' was saved.\n";
 

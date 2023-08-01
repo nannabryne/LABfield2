@@ -18,6 +18,7 @@ DLATFIELD2  	:= -DFFT3D -DHDF5
 
 # flags for this program
 DPROGRAM 		:= -DLOOPCORR -DPROJECTION -DFOURIER -DPART
+# DPROGRAM = -DPART
 
 
 # further compiler options
@@ -58,3 +59,6 @@ analysis:
 .PHONY: clean
 clean:
 	rm -f $(EXEC) $(wildcard *.o) 
+
+
+
