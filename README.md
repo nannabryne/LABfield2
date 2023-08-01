@@ -1,8 +1,6 @@
 # $\textup{LABfield2}$
 
-Example codes to control the results from running code in [$\textup{LATfield2}$](https://github.com/nannabryne/LATfield2/tree/master) that is OpenMP parallelised.
-
-(list of functions that are changed?)
+Example codes to control the results from running code from the $\textup{LATfield2}$ library, which has been further OpenMP parallelised [here](https://github.com/nannabryne/LATfield2/tree/master).
 
 ## How to run
 Suppose you are in the `unit_tests` directory.
@@ -28,7 +26,7 @@ and terminal print will be provided.
 Flags are given be given to the compiler to specify what tests should be run.
 - **`-DLOOPCORR`** $\leadsto$ `loopCorrectionSimple(...)` (see header `test_LoopCorrection.hpp`)
     >In `LATfield2/LATfield2_Lattice[_decl].hpp`, we test
-    >1.  `Lattice::for_each(...)`
+    >1.  `Lattice::for_each(...)`[^1]
     > ---
 
 - **`-DPROJECTION`** $\leadsto$ `partMeshProjectionSimple(...)` (see header `test_PartMeshProjection.hpp`)
@@ -44,9 +42,14 @@ Flags are given be given to the compiler to specify what tests should be run.
     > ---
 - **`-DPART`** $\leadsto$ `particleUpdateSimple(...)` (see header `test_ParticleUpdate.hpp`)
     > In `LATfield2/particles/LATfield2_Particles.hpp`, we test
-    > 1. `Particles::updateVel(...)`
+    > 1. `Particles::updateVel(...)`[^2]
     > 2. `Particles::moveParticles(...)`
     > ---
+
+
+[^1]: Only considering one of the versions, in a fairly simple manner.
+
+[^2]: The version without `mappingClass` object.
 
 
 <!-- 
